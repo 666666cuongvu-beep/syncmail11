@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý danh sách Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      text-align: center;
+      padding: 20px;
+    }
+
+    textarea, input {
+      width: 300px;
+      padding: 10px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .blue { background-color: #007bff; color: white; border: none; }
+    .red { background-color: #dc3545; color: white; border: none; }
+    .yellow { background-color: #ffc107; border: none; }
+    .green { background-color: #28a745; color: white; border: none; }
+    .small-input {
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📧 Quản lý danh sách Email Online<br>(Tự Lọc & Lưu)</h2>
+
+  <textarea id="emailInput" rows="5" placeholder="Dán email, text rác, phân cách bất kỳ (| ; , space ...)"></textarea>
+
+  <button class="blue" onclick="addEmails()">➕ Thêm Email Vào Danh Sách</button>
+  <button class="red" onclick="clearEmails()">🗑️ Xóa Danh Sách Email</button>
+
+  <input type="text" id="emailDisplay" placeholder="Email sẽ xuất hiện ở đây" class="small-input" readonly />
+  <p>📊 Số email còn lại: <span id="emailCount">0</span></p>
+
+  <button class="yellow" onclick="clearLog()">🧹 Clear Log Copy</button>
+  <button class="green" onclick="copyEmails()">📋 Lấy & Copy Email</button>
+
+  <script>
+    let emailList = [];
+
+    function extractEmails(text) {
+      const cleaned = text.replace(/[,|; \n\r]+/g, " ");
+      const parts = cleaned.split(" ");
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return parts.filter(e => emailRegex.test(e.toLowerCase()));
+    }
+
+    function addEmails() {
+      const input = document.getElementById("emailInput").value;
+      const newEmails = extractEmails(input);
+      newEmails.forEach(email => {
+        if (!emailList.includes(email)) {
+          emailList.push(email);
+        }
+      });
+      updateDisplay();
+    }
+
+    function clearEmails() {
+      emailList = [];
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      const emailDisplay = document.getElementById("emailDisplay");
+      const count = document.getElementById("emailCount");
+      emailDisplay.value = emailList.join(", ");
+      count.innerText = emailList.length;
+    }
+
+    function clearLog() {
+      document.getElementById("emailDisplay").value = "";
+    }
+
+    function copyEmails() {
+      const text = emailList.join(", ");
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Đã copy danh sách email!");
+      });
+    }
+  </script>
+
+</body>
+</html>
